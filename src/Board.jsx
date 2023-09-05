@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import Snake from "./Snake";
 import "./Board.css";
+import Gameover from "./GameOver";
 
 const Board = () => {
   let boardSize = 14;
@@ -16,6 +16,19 @@ const Board = () => {
     { row: 4, col: 7 },
     { row: 4, col: 6 },
   ]);
+  function newGame() {
+    setScore(0);
+    setSnake([
+      { row: 4, col: 8 },
+      { row: 4, col: 7 },
+      { row: 4, col: 6 },
+    ]);
+    setGameOver(false);
+    setFood({
+      row: 8,
+      col: 8,
+    });
+  }
   const [canvas, setCanvas] = useState(
     Array(boardSize)
       .fill(1)
@@ -72,7 +85,11 @@ const Board = () => {
       (el, ind) =>
         ind != 0 && el.row == newSnake[0].row && el.col == newSnake[0].col
     );
-    snakeCollapse ? setGameOver((prev) => true) : "";
+    let borderReach =
+      newSnake[0].row - 1 == boardSize || newSnake[0].col - 1 == boardSize
+        ? true
+        : false;
+    snakeCollapse || borderReach ? setGameOver((prev) => true) : "";
     setSnake((prev) => newSnake);
   }
   useEffect(() => {
@@ -83,16 +100,23 @@ const Board = () => {
         e.code == "ArrowDown" ||
         e.code == "ArrowUp"
       ) {
+        if (direction.current == "ArrowRight" && e.code == "ArrowLeft") return;
+        else if (direction.current == "ArrowLeft" && e.code == "ArrowRight")
+          return;
+        else if (direction.current == "ArrowDown" && e.code == "ArrowUp")
+          return;
+        else if (direction.current == "ArrowUp" && e.code == "ArrowDown")
+          return;
         direction.current = e.code;
       }
     });
-    let interval = setInterval(moveSnake, 250);
+    let interval = setInterval(moveSnake, 200);
     return () => clearInterval(interval);
   }, [snake]);
   return (
     <>
-      {gameOver && <h4>Gameover</h4>}
-      <h3>Score {score}</h3>
+      {gameOver && <Gameover newGame={newGame} />}
+      <h3 className="score">Score {score}</h3>
       <div className="board">
         {canvas.map((el, ind) => {
           let foodBlock =
@@ -105,9 +129,7 @@ const Board = () => {
                   : "cell" + foodBlock
               }
               key={"cell-" + ind}
-            >
-              {ind}
-            </span>
+            ></span>
           );
         })}
       </div>

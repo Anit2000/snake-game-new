@@ -11,7 +11,6 @@
 .cell {
   height: 14px;
   width: 14px;
-  border: solid 1px #fff;
   position: relative;
 }
 .snake {
@@ -23,4 +22,31 @@
 }
 .food {
   background-color: red;
+  border-radius: 20px;
+}
+.gameOver {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1000;
+  padding: 24px;
+  border-radius: 8px;
+  min-width: 250px;
+}
+.gameOver p {
+  color: #000;
+  text-align: center;
+  font-weight: 500;
+  font-size: 20px;
+}
+.score {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
 }
